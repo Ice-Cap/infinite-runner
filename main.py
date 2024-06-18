@@ -4,17 +4,27 @@ import sys
 pygame.init()
 pygame.font.init()
 screen = pygame.display.set_mode((800, 600))
-pygame.display.set_caption("My First Game")
+pygame.display.set_caption("Infinite Runner")
 
 my_font = pygame.font.SysFont("monospace", 20)
 
+# Global variables
 x = 10
 y = 500
 velocity = 0
-direction = None
-gravity = 0.2
+gravity = 0.5
 game_on = True
 floor_y = 500
+jumping = False
+direction = None
+
+# Game functions
+def draw_player():
+    pygame.draw.rect(screen, (0, 0, 255), (x, y, 50, 100))
+
+def draw_text(text):
+    text_render = my_font.render(text, True, (0, 0, 0))
+    screen.blit(text_render, (10, 10))
 
 while game_on:
     for event in pygame.event.get():
@@ -23,6 +33,7 @@ while game_on:
             pygame.quit()
             sys.exit()
 
+    # Handle jumping and falling
     if direction == "up":
         y -= velocity
         velocity -= gravity
@@ -32,30 +43,25 @@ while game_on:
         y += velocity
         velocity += gravity
         if y >= floor_y:
+            y = floor_y
             velocity = 0
             direction = None
+            jumping = False
 
     key = pygame.key.get_pressed()
     if key[pygame.K_LEFT]:
-        x -= 1
+        x -= 2
     if key[pygame.K_RIGHT]:
-        x += 1
-    if key[pygame.K_UP]:
-        velocity = 2
+        x += 2
+    if key[pygame.K_UP] and not jumping:
+        velocity = 12
         direction = "up"
-        y -= 1
-    if key[pygame.K_DOWN]:
-        y += 1
+        jumping = True
+    if key[pygame.K_DOWN] and jumping:
+        y += 2
 
     screen.fill((255, 255, 255))
 
-    pygame.draw.rect(screen, (0, 0, 255), (x, y, 50, 100))
-
-    x_y = my_font.render(f"x: {round(x)} y: {round(y)}", True, (0, 0, 0))
-    screen.blit(x_y, (10, 10))
-    velocity_render = my_font.render(f"velocity: {round(velocity)}", True, (0, 0, 0))
-    screen.blit(velocity_render, (10, 40))
-    direction_render = my_font.render(f"direction: {direction}", True, (0, 0, 0))
-    screen.blit(direction_render, (10, 70))
+    draw_player()
 
     pygame.display.flip()
