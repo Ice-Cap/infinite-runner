@@ -109,6 +109,13 @@ def draw_text(text):
     text_render = my_font.render(text, True, (0, 0, 0))
     screen.blit(text_render, (10, 10))
 
+def generate_obstacles():
+    random_screen_x = random.randint(round(SCREEN_WIDTH / 2) - 160, SCREEN_WIDTH - 220)
+    if len(obstacles) == 0 or obstacles.sprites()[-1].rect.right < random_screen_x:
+        obs = Obstacle()
+        obstacles.add(obs)
+        all_sprites.add(obs)
+
 # Create ground and player objects
 ground = Ground()
 player_1 = Player()
@@ -119,13 +126,11 @@ obs_1 = Obstacle()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(ground)
 all_sprites.add(player_1)
-all_sprites.add(obs_1)
 
 platforms = pygame.sprite.Group()
 platforms.add(ground)
 
 obstacles = pygame.sprite.Group()
-obstacles.add(obs_1)
 
 game_on = True
 while game_on:
@@ -142,6 +147,8 @@ while game_on:
                 player_1.cancel_jump()
 
     screen.fill((255, 255, 255))
+
+    generate_obstacles()
 
     player_hits_obstacle = pygame.sprite.spritecollide(player_1, obstacles, False)
     if player_hits_obstacle:
