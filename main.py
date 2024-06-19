@@ -10,7 +10,7 @@ SCREEN_HEIGHT = 600
 
 ACC = 0.5
 FRIC = -0.12
-FPS = 65
+FPS = 60
 GRAVITY = 0.5
 
 score = 0
