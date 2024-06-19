@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 import sys
 import random
+import time
 
 # Global variables
 SCREEN_WIDTH = 800
@@ -52,9 +53,9 @@ class Player(pygame.sprite.Sprite):
         self.pos += self.vel + 0.5 * self.acc
 
         if self.pos.x > SCREEN_WIDTH:
-            self.pos.x = 0
-        if self.pos.x < 0:
             self.pos.x = SCREEN_WIDTH
+        if self.pos.x < 0:
+            self.pos.x = 0
 
         self.rect.midbottom = self.pos
 
@@ -123,6 +124,9 @@ all_sprites.add(obs_1)
 platforms = pygame.sprite.Group()
 platforms.add(ground)
 
+obstacles = pygame.sprite.Group()
+obstacles.add(obs_1)
+
 game_on = True
 while game_on:
     for event in pygame.event.get():
@@ -138,6 +142,18 @@ while game_on:
                 player_1.cancel_jump()
 
     screen.fill((255, 255, 255))
+
+    player_hits_obstacle = pygame.sprite.spritecollide(player_1, obstacles, False)
+    if player_hits_obstacle:
+        for entity in all_sprites:
+            entity.kill()
+        time.sleep(1)
+        screen.fill((255,0,0))
+        pygame.display.update()
+        time.sleep(1)
+        game_on = False
+        pygame.quit()
+        sys.exit()
 
     for entity in all_sprites:
         entity.update()
