@@ -10,7 +10,7 @@ SCREEN_HEIGHT = 600
 
 ACC = 0.5
 FRIC = -0.12
-FPS = 60
+FPS = 65
 GRAVITY = 0.5
 
 score = 0
@@ -18,7 +18,7 @@ score = 0
 pygame.init()
 vec = pygame.math.Vector2
 pygame.font.init()
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.DOUBLEBUF)
 pygame.display.set_caption("Infinite Runner")
 
 FramePerSec = pygame.time.Clock()
@@ -28,7 +28,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.surface = pygame.Surface((30, 30))
-        self.surface.fill((128, 255, 40))
+        self.surface.fill((10, 171, 74))
         self.rect = self.surface.get_rect(center = (10, 420))
 
         self.pos = vec((30, 385))
@@ -92,22 +92,29 @@ class Ground(pygame.sprite.Sprite):
 class Obstacle(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        y = SCREEN_HEIGHT - 10
-        height = 100
-        if random.randint(1, 8) == 1:
-            y = (SCREEN_HEIGHT - 60) / 2
-            height = SCREEN_HEIGHT - 60
 
+        # Generate top obstacles
+        if random.randint(1, 5) == 1:
+            height = SCREEN_HEIGHT - 50
+            self.surface = pygame.Surface((20, height))
+            self.surface.fill((115, 16, 13))
+            self.rect = self.surface.get_rect(
+                topleft = (random.randint(SCREEN_WIDTH + 10, SCREEN_WIDTH + 100), 0))
+            return
+
+        height = random.randint(70, 100)
         self.surface = pygame.Surface((20, height))
-        self.surface.fill((0, 0, 0))
-        self.rect = self.surface.get_rect(center = (SCREEN_WIDTH - 10, y))
+        self.surface.fill((115, 16, 13))
+
+        self.rect = self.surface.get_rect(
+            bottomleft = (random.randint(SCREEN_WIDTH + 10, SCREEN_WIDTH + 100), SCREEN_HEIGHT - 20))
 
     def update(self):
         self.move()
 
     def move(self):
         global score
-        self.rect.x -= 5
+        self.rect.x -= 4
         if self.rect.right < 0:
             score += 1
             self.kill()
@@ -126,7 +133,7 @@ def draw_text(text, position = (10, 10), font_size = 20, center = False):
     return text_render
 
 def generate_obstacles():
-    random_screen_x = random.randint(round(SCREEN_WIDTH / 2) - 160, SCREEN_WIDTH - 220)
+    random_screen_x = random.randint(SCREEN_WIDTH - 600, SCREEN_WIDTH - 220)
     if len(obstacles) == 0 or obstacles.sprites()[-1].rect.right < random_screen_x:
         obs = Obstacle()
         obstacles.add(obs)
@@ -135,8 +142,6 @@ def generate_obstacles():
 # Create ground and player objects
 ground = Ground()
 player_1 = Player()
-
-obs_1 = Obstacle()
 
 # Add sprites to groups
 all_sprites = pygame.sprite.Group()
@@ -161,7 +166,7 @@ while True:
             if event.key == pygame.K_SPACE:
                 player_1.cancel_jump()
 
-    screen.fill((253, 253, 253))
+    screen.fill((230, 230, 230))
 
     if game_over:
         center_width = SCREEN_WIDTH / 2
