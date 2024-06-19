@@ -92,9 +92,15 @@ class Ground(pygame.sprite.Sprite):
 class Obstacle(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.surface = pygame.Surface((20, 100))
+        y = SCREEN_HEIGHT - 10
+        height = 100
+        if random.randint(1, 8) == 1:
+            y = (SCREEN_HEIGHT - 60) / 2
+            height = SCREEN_HEIGHT - 60
+
+        self.surface = pygame.Surface((20, height))
         self.surface.fill((0, 0, 0))
-        self.rect = self.surface.get_rect(center = (SCREEN_WIDTH - 10, SCREEN_HEIGHT - 10))
+        self.rect = self.surface.get_rect(center = (SCREEN_WIDTH - 10, y))
 
     def update(self):
         self.move()
