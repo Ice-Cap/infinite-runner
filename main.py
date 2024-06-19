@@ -58,7 +58,7 @@ class Player(pygame.sprite.Sprite):
 
         self.rect.midbottom = self.pos
 
-    def update(self):
+    def check_stop_falling(self):
         # When hitting a platform, stop falling
         hits = pygame.sprite.spritecollide(self, platforms, False)
         if hits and self.vel.y > 0 and self.pos.y < hits[0].rect.bottom:
@@ -77,12 +77,31 @@ class Player(pygame.sprite.Sprite):
         if self.jumping and self.vel.y < -3:
             self.vel.y = -3
 
+    def update(self):
+        self.move()
+        self.check_stop_falling()
+
 class Ground(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.surface = pygame.Surface((SCREEN_WIDTH, 20))
         self.surface.fill((0, 0, 0))
         self.rect = self.surface.get_rect(center = (SCREEN_WIDTH / 2, SCREEN_HEIGHT - 10))
+
+class Obstacle(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.surface = pygame.Surface((20, 100))
+        self.surface.fill((0, 0, 0))
+        self.rect = self.surface.get_rect(center = (SCREEN_WIDTH - 10, SCREEN_HEIGHT - 10))
+
+    def update(self):
+        self.move()
+
+    def move(self):
+        self.rect.x -= 5
+        if self.rect.right < 0:
+            self.kill()
 
 # Game functions
 def draw_text(text):
@@ -93,10 +112,14 @@ def draw_text(text):
 ground = Ground()
 player_1 = Player()
 
+obs_1 = Obstacle()
+
 # Add sprites to groups
 all_sprites = pygame.sprite.Group()
 all_sprites.add(ground)
 all_sprites.add(player_1)
+all_sprites.add(obs_1)
+
 platforms = pygame.sprite.Group()
 platforms.add(ground)
 
@@ -116,9 +139,8 @@ while game_on:
 
     screen.fill((255, 255, 255))
 
-    player_1.move()
-    player_1.update()
     for entity in all_sprites:
+        entity.update()
         screen.blit(entity.surface, entity.rect)
 
     pygame.display.update()
