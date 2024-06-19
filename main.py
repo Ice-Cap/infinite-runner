@@ -21,8 +21,6 @@ pygame.font.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Infinite Runner")
 
-my_font = pygame.font.SysFont("monospace", 20)
-
 FramePerSec = pygame.time.Clock()
 
 # Classes
@@ -115,9 +113,17 @@ class Obstacle(pygame.sprite.Sprite):
             self.kill()
 
 # Game functions
-def draw_text(text):
+def draw_text(text, position = (10, 10), font_size = 20, center = False):
+    my_font = pygame.font.SysFont("monospace", font_size)
     text_render = my_font.render(text, True, (0, 0, 0))
-    screen.blit(text_render, (10, 10))
+
+    if center:
+        text_rect = text_render.get_rect(center = position)
+        screen.blit(text_render, text_rect)
+        return text_render
+
+    screen.blit(text_render, position)
+    return text_render
 
 def generate_obstacles():
     random_screen_x = random.randint(round(SCREEN_WIDTH / 2) - 160, SCREEN_WIDTH - 220)
@@ -142,13 +148,10 @@ platforms.add(ground)
 
 obstacles = pygame.sprite.Group()
 
-game_on = True
-while game_on:
-    screen.fill((255, 255, 255))
-
+game_over = False
+while True:
     for event in pygame.event.get():
         if event.type == QUIT:
-            game_on = False
             pygame.quit()
             sys.exit()
         if event.type == pygame.KEYDOWN:
@@ -158,6 +161,16 @@ while game_on:
             if event.key == pygame.K_SPACE:
                 player_1.cancel_jump()
 
+    screen.fill((253, 253, 253))
+
+    if game_over:
+        center_width = SCREEN_WIDTH / 2
+        center_height = SCREEN_HEIGHT / 2
+        draw_text("Game Over!", (center_width, center_height - 80), 40, center=True)
+        draw_text("Score: " + str(score), (center_width, center_height), 40, center=True)
+        pygame.display.update()
+        continue
+
     draw_text("Score: " + str(score))
 
     generate_obstacles()
@@ -166,17 +179,11 @@ while game_on:
     if player_hits_obstacle:
         for entity in all_sprites:
             entity.kill()
-        time.sleep(1)
-        screen.fill((255,0,0))
-        pygame.display.update()
-        time.sleep(1)
-        game_on = False
-        pygame.quit()
-        sys.exit()
+        game_over = True
 
     for entity in all_sprites:
         entity.update()
         screen.blit(entity.surface, entity.rect)
 
-    pygame.display.update()
+    pygame.display.flip()
     FramePerSec.tick(FPS)
