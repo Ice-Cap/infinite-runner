@@ -13,6 +13,8 @@ FRIC = -0.12
 FPS = 60
 GRAVITY = 0.5
 
+score = 0
+
 pygame.init()
 vec = pygame.math.Vector2
 pygame.font.init()
@@ -31,7 +33,7 @@ class Player(pygame.sprite.Sprite):
         self.surface.fill((128, 255, 40))
         self.rect = self.surface.get_rect(center = (10, 420))
 
-        self.pos = vec((10, 385))
+        self.pos = vec((30, 385))
         self.vel = vec(0,0)
         self.acc = vec(0,0)
         self.jumping = False
@@ -106,8 +108,10 @@ class Obstacle(pygame.sprite.Sprite):
         self.move()
 
     def move(self):
+        global score
         self.rect.x -= 5
         if self.rect.right < 0:
+            score += 1
             self.kill()
 
 # Game functions
@@ -140,6 +144,8 @@ obstacles = pygame.sprite.Group()
 
 game_on = True
 while game_on:
+    screen.fill((255, 255, 255))
+
     for event in pygame.event.get():
         if event.type == QUIT:
             game_on = False
@@ -152,7 +158,7 @@ while game_on:
             if event.key == pygame.K_SPACE:
                 player_1.cancel_jump()
 
-    screen.fill((255, 255, 255))
+    draw_text("Score: " + str(score))
 
     generate_obstacles()
 
