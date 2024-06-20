@@ -5,8 +5,10 @@ import random
 import time
 
 # Global variables
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 700
+SCREEN_HEIGHT = 500
+GROUND_HEIGHT = 45
+PLAYER_HEIGHT = 50
 
 ACC = 0.5
 FRIC = -0.12
@@ -27,9 +29,10 @@ FramePerSec = pygame.time.Clock()
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.surface = pygame.Surface((30, 30))
+        self.surface = pygame.Surface((30, PLAYER_HEIGHT))
         self.surface.fill((10, 171, 74))
-        self.rect = self.surface.get_rect(center = (10, 420))
+        self.image = self.surface
+        self.rect = self.surface.get_rect(center = (10, 430))
 
         self.pos = vec((30, 385))
         self.vel = vec(0,0)
@@ -82,12 +85,14 @@ class Player(pygame.sprite.Sprite):
         self.move()
         self.check_stop_falling()
 
+# Ground is a transparent surface that acts as a platform
 class Ground(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.surface = pygame.Surface((SCREEN_WIDTH, 20))
-        self.surface.fill((0, 0, 0))
-        self.rect = self.surface.get_rect(center = (SCREEN_WIDTH / 2, SCREEN_HEIGHT - 10))
+        self.surface = pygame.Surface((SCREEN_WIDTH, GROUND_HEIGHT), pygame.SRCALPHA)
+        self.surface.fill((0, 0, 0, 0))
+        self.rect = self.surface.get_rect(bottomleft = (0, SCREEN_HEIGHT))
+        self.image = self.surface
 
 class Obstacle(pygame.sprite.Sprite):
     def __init__(self):
@@ -95,9 +100,10 @@ class Obstacle(pygame.sprite.Sprite):
 
         # Generate top obstacles
         if random.randint(1, 5) == 1:
-            height = SCREEN_HEIGHT - 50
+            height = SCREEN_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT - 10
             self.surface = pygame.Surface((20, height))
             self.surface.fill((115, 16, 13))
+            self.image = self.surface
             self.rect = self.surface.get_rect(
                 topleft = (random.randint(SCREEN_WIDTH + 10, SCREEN_WIDTH + 100), 0))
             return
@@ -105,9 +111,10 @@ class Obstacle(pygame.sprite.Sprite):
         height = random.randint(70, 100)
         self.surface = pygame.Surface((20, height))
         self.surface.fill((115, 16, 13))
+        self.image = self.surface
 
         self.rect = self.surface.get_rect(
-            bottomleft = (random.randint(SCREEN_WIDTH + 10, SCREEN_WIDTH + 100), SCREEN_HEIGHT - 20))
+            bottomleft = (random.randint(SCREEN_WIDTH + 10, SCREEN_WIDTH + 100), SCREEN_HEIGHT - GROUND_HEIGHT))
 
     def update(self):
         self.move()
@@ -153,6 +160,10 @@ platforms.add(ground)
 
 obstacles = pygame.sprite.Group()
 
+# Load images
+background_image = pygame.image.load("assets/forest-background.jpg").convert()
+scaled_background = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
 game_over = False
 while True:
     for event in pygame.event.get():
@@ -166,7 +177,7 @@ while True:
             if event.key == pygame.K_SPACE:
                 player_1.cancel_jump()
 
-    screen.fill((230, 230, 230))
+    screen.blit(scaled_background, (0, 0))
 
     if game_over:
         center_width = SCREEN_WIDTH / 2
@@ -186,9 +197,8 @@ while True:
             entity.kill()
         game_over = True
 
-    for entity in all_sprites:
-        entity.update()
-        screen.blit(entity.surface, entity.rect)
+    all_sprites.update()
+    all_sprites.draw(screen)
 
     pygame.display.flip()
     FramePerSec.tick(FPS)
