@@ -1,2 +1,3 @@
 Forest background: https://www.freepik.com/free-vector/cartoon-computer-games-night-forest-landscape-plant-green-natural-environment-wood-grass_10600821.htm#fromView=search&page=1&position=3&uuid=fc991956-d05e-408b-b93b-573b21cacb0f
 Character spritesheet: https://opengameart.org/content/jetpack-robot
+Man character sprite: https://dougveiras.itch.io/man-pixel

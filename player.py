@@ -9,8 +9,16 @@ class Player(pygame.sprite.Sprite):
         self.player_sheet = settings["player_sheet"]
         self.settings = settings
         self.game = game
-        self.frames = self.initialize_frames()
-        self.image = self.frames["walk"][0]
+        # self.frames = self.initialize_frames()
+        # self.image = self.frames["walk"][0]
+        walk_frames = []
+        for i in range(0, len(settings["walking_images"])):
+            frame = settings["walking_images"][i]
+            scaled_frame = pygame.transform.scale(frame, (40, self.settings["player_height"]))
+            walk_frames.append(scaled_frame)
+
+        self.frames = {"walk": walk_frames}
+        self.image = walk_frames[0]
         self.rect = self.image.get_rect(center = (10, 430))
 
         self.current_frame = 0
@@ -67,18 +75,17 @@ class Player(pygame.sprite.Sprite):
 
     def animate(self):
         now = pygame.time.get_ticks()
-        if now - self.last_update > 150:
+        if now - self.last_update > 60:
             self.last_update = now
             self.current_frame = (self.current_frame + 1) % len(self.frames["walk"])
             self.image = self.frames["walk"][self.current_frame]
-            # self.image = pygame.transform.scale(self.image, (35, self.settings["player_height"]))
 
     def update(self):
         self.move()
         self.check_stop_falling()
         self.animate()
 
-    # Extract a frame from the spritesheet
+    # Extract a frame from a spritesheet
     def get_frame(self, spritesheet, frame_rect):
         frame = pygame.Surface((frame_rect[2], frame_rect[3]), pygame.SRCALPHA)
         frame.blit(spritesheet, (0, 0), frame_rect)
