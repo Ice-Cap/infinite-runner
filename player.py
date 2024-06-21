@@ -7,12 +7,12 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, settings, game):
         super().__init__()
         self.player_sheet = settings["player_sheet"]
-        self.frames = self.initialize_frames()
-        self.image = self.frames["walk"][0]
-        self.image = pygame.transform.scale(self.image, (35, settings["player_height"]))
-        self.rect = self.image.get_rect(center = (10, 430))
         self.settings = settings
         self.game = game
+        self.frames = self.initialize_frames()
+        self.image = self.frames["walk"][0]
+        # self.image = pygame.transform.scale(self.image, (35, settings["player_height"]))
+        self.rect = self.image.get_rect(center = (10, 430))
 
         self.current_frame = 0
         self.last_update = pygame.time.get_ticks()
@@ -70,7 +70,7 @@ class Player(pygame.sprite.Sprite):
             self.last_update = now
             self.current_frame = (self.current_frame + 1) % len(self.frames["walk"])
             self.image = self.frames["walk"][self.current_frame]
-            self.image = pygame.transform.scale(self.image, (35, self.settings["player_height"]))
+            # self.image = pygame.transform.scale(self.image, (35, self.settings["player_height"]))
 
     def update(self):
         self.move()
@@ -91,9 +91,13 @@ class Player(pygame.sprite.Sprite):
         jump_frames.append(pygame.Rect(0, 45, 15, 15))
         jump_frames.append(pygame.Rect(0, 60, 15, 15))
         for i in range(0, len(walk_frames)):
-            walk_frames[i] = self.get_frame(self.player_sheet, walk_frames[i])
+            frame = walk_frames[i]
+            frame = self.get_frame(self.player_sheet, walk_frames[i])
+            walk_frames[i] = pygame.transform.scale(frame, (35, self.settings["player_height"]))
         for i in range(0, len(jump_frames)):
-            jump_frames[i] = self.get_frame(self.player_sheet, jump_frames[i])
+            frame = jump_frames[i]
+            frame = self.get_frame(self.player_sheet, jump_frames[i])
+            jump_frames[i] = pygame.transform.scale(frame, (35, self.settings["player_height"]))
 
         return {
             "walk": walk_frames,

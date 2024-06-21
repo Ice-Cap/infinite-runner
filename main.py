@@ -34,26 +34,32 @@ class Ground(pygame.sprite.Sprite):
         self.rect = self.surface.get_rect(bottomleft = (0, SCREEN_HEIGHT))
         self.image = self.surface
 
+rock_1 = pygame.image.load("assets/rock-1.png").convert_alpha()
+rock_1 = pygame.transform.scale(rock_1, (55, 100))
+rock_2 = pygame.image.load("assets/rock-2.png").convert_alpha()
+rock_2 = pygame.transform.scale(rock_2, (60, 60))
+rock_3 = pygame.image.load("assets/rock-3.png").convert_alpha()
+rock_3 = pygame.transform.scale(rock_3, (60, 140))
 class Obstacle(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
+
+        color = (59, 28, 4)
 
         # Generate top obstacles
         if random.randint(1, 5) == 1:
             height = SCREEN_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT - 10
             self.surface = pygame.Surface((20, height))
-            self.surface.fill((115, 16, 13))
+            self.surface.fill(color)
             self.image = self.surface
             self.rect = self.surface.get_rect(
                 topleft = (random.randint(SCREEN_WIDTH + 10, SCREEN_WIDTH + 100), 0))
             return
 
-        height = random.randint(70, 100)
-        self.surface = pygame.Surface((20, height))
-        self.surface.fill((115, 16, 13))
-        self.image = self.surface
+        random_obstacle = random.choice([rock_1, rock_2, rock_3])
+        self.image = random_obstacle
 
-        self.rect = self.surface.get_rect(
+        self.rect = self.image.get_rect(
             bottomleft = (random.randint(SCREEN_WIDTH + 10, SCREEN_WIDTH + 100), SCREEN_HEIGHT - GROUND_HEIGHT))
 
     def update(self):
