@@ -87,35 +87,10 @@ def generate_obstacles():
         obstacles.add(obs)
         all_sprites.add(obs)
 
-
-# Extract a frame from the spritesheet
-def get_frame(spritesheet, frame_rect):
-    frame = pygame.Surface((frame_rect[2], frame_rect[3]), pygame.SRCALPHA)
-    frame.blit(spritesheet, (0, 0), frame_rect)
-    return frame
-
 # Load images
 background_image = pygame.image.load("assets/forest-background.jpg").convert()
 scaled_background = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
-
 player_sheet = pygame.image.load("assets/player-spritesheet.png").convert_alpha()
-
-walk_frames = []
-walk_frames.append(pygame.Rect(0, 18, 15, 15))
-walk_frames.append(pygame.Rect(15, 18, 15, 15))
-jump_frames = []
-jump_frames.append(pygame.Rect(0, 45, 15, 15))
-jump_frames.append(pygame.Rect(0, 60, 15, 15))
-for i in range(0, len(walk_frames)):
-    walk_frames[i] = get_frame(player_sheet, walk_frames[i])
-for i in range(0, len(jump_frames)):
-    jump_frames[i] = get_frame(player_sheet, jump_frames[i])
-
-player_frames = {
-    "walk": walk_frames,
-    "jump": jump_frames
-}
-
 
 ground = Ground()
 
@@ -135,13 +110,14 @@ settings = {
     "ground_height": GROUND_HEIGHT,
     "gravity": GRAVITY,
     "acc": ACC,
-    "fric": FRIC
+    "fric": FRIC,
+    "player_sheet": player_sheet
 }
 game = {
     "score": 0,
     "platforms": platforms
 }
-player_1 = Player(player_frames, settings, game)
+player_1 = Player(settings, game)
 all_sprites.add(player_1)
 
 game_over = False

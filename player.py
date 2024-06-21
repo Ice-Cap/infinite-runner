@@ -4,12 +4,13 @@ from pygame.locals import *
 vec = pygame.math.Vector2
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, frames, settings, game):
+    def __init__(self, settings, game):
         super().__init__()
-        self.image = frames["walk"][0]
+        self.player_sheet = settings["player_sheet"]
+        self.frames = self.initialize_frames()
+        self.image = self.frames["walk"][0]
         self.image = pygame.transform.scale(self.image, (35, settings["player_height"]))
         self.rect = self.image.get_rect(center = (10, 430))
-        self.frames = frames
         self.settings = settings
         self.game = game
 
@@ -75,3 +76,26 @@ class Player(pygame.sprite.Sprite):
         self.move()
         self.check_stop_falling()
         self.animate()
+
+    # Extract a frame from the spritesheet
+    def get_frame(self, spritesheet, frame_rect):
+        frame = pygame.Surface((frame_rect[2], frame_rect[3]), pygame.SRCALPHA)
+        frame.blit(spritesheet, (0, 0), frame_rect)
+        return frame
+
+    def initialize_frames(self):
+        walk_frames = []
+        walk_frames.append(pygame.Rect(0, 18, 15, 15))
+        walk_frames.append(pygame.Rect(15, 18, 15, 15))
+        jump_frames = []
+        jump_frames.append(pygame.Rect(0, 45, 15, 15))
+        jump_frames.append(pygame.Rect(0, 60, 15, 15))
+        for i in range(0, len(walk_frames)):
+            walk_frames[i] = self.get_frame(self.player_sheet, walk_frames[i])
+        for i in range(0, len(jump_frames)):
+            jump_frames[i] = self.get_frame(self.player_sheet, jump_frames[i])
+
+        return {
+            "walk": walk_frames,
+            "jump": jump_frames
+        }
