@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 import sys
 import random
-import time
+from player import Player
 
 # Global variables
 SCREEN_WIDTH = 700
@@ -24,77 +24,6 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.DOUBLEBUF
 pygame.display.set_caption("Infinite Runner")
 
 FramePerSec = pygame.time.Clock()
-
-# Classes
-class Player(pygame.sprite.Sprite):
-    def __init__(self, frames):
-        super().__init__()
-        self.image = frames["walk"][0]
-        self.image = pygame.transform.scale(self.image, (35, PLAYER_HEIGHT))
-        self.rect = self.image.get_rect(center = (10, 430))
-        self.frames = frames
-
-        self.current_frame = 0
-        self.last_update = pygame.time.get_ticks()
-
-        self.pos = vec((30, 385))
-        self.vel = vec(0,0)
-        self.acc = vec(0,0)
-        self.jumping = False
-
-    def move(self):
-        self.acc = vec(0, GRAVITY)
-
-        # Acceleration is added when keys are pressed
-        # Fricition is applied as a constant to movement in the x direction
-        pressed_keys = pygame.key.get_pressed()
-        if pressed_keys[K_LEFT]:
-            self.acc.x = -ACC
-        if pressed_keys[K_RIGHT]:
-            self.acc.x = ACC
-
-        self.acc.x += self.vel.x * FRIC
-        self.vel += self.acc
-        self.pos += self.vel + 0.5 * self.acc
-
-        if self.pos.x > SCREEN_WIDTH:
-            self.pos.x = SCREEN_WIDTH
-        if self.pos.x < 0:
-            self.pos.x = 0
-
-        self.rect.midbottom = self.pos
-
-    def check_stop_falling(self):
-        # When hitting a platform, stop falling
-        hits = pygame.sprite.spritecollide(self, platforms, False)
-        if hits and self.vel.y > 0 and self.pos.y < hits[0].rect.bottom:
-            self.pos.y = hits[0].rect.top + 1
-            self.vel.y = 0
-            self.jumping = False
-
-    def jump(self):
-        # Can only jump if on a platform
-        hits = pygame.sprite.spritecollide(self, platforms, False)
-        if hits and not self.jumping:
-            self.jumping = True
-            self.vel.y = -15
-
-    def cancel_jump(self):
-        if self.jumping and self.vel.y < -3:
-            self.vel.y = -3
-
-    def animate(self):
-        now = pygame.time.get_ticks()
-        if now - self.last_update > 150:
-            self.last_update = now
-            self.current_frame = (self.current_frame + 1) % len(self.frames["walk"])
-            self.image = self.frames["walk"][self.current_frame]
-            self.image = pygame.transform.scale(self.image, (35, PLAYER_HEIGHT))
-
-    def update(self):
-        self.move()
-        self.check_stop_falling()
-        self.animate()
 
 # Ground is a transparent surface that acts as a platform
 class Ground(pygame.sprite.Sprite):
@@ -187,19 +116,33 @@ player_frames = {
     "jump": jump_frames
 }
 
-# Create ground and player objects
+
 ground = Ground()
-player_1 = Player(player_frames)
 
 # Add sprites to groups
 all_sprites = pygame.sprite.Group()
 all_sprites.add(ground)
-all_sprites.add(player_1)
 
 platforms = pygame.sprite.Group()
 platforms.add(ground)
 
 obstacles = pygame.sprite.Group()
+
+settings = {
+    "screen_width": SCREEN_WIDTH,
+    "screen_height": SCREEN_HEIGHT,
+    "player_height": PLAYER_HEIGHT,
+    "ground_height": GROUND_HEIGHT,
+    "gravity": GRAVITY,
+    "acc": ACC,
+    "fric": FRIC
+}
+game = {
+    "score": 0,
+    "platforms": platforms
+}
+player_1 = Player(player_frames, settings, game)
+all_sprites.add(player_1)
 
 game_over = False
 while True:
