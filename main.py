@@ -17,6 +17,8 @@ FRIC = -0.12
 FPS = 60
 GRAVITY = 0.5
 
+DEFAULT_FONT = "skia"
+
 # Initialize pygame
 pygame.init()
 vec = pygame.math.Vector2
@@ -84,13 +86,13 @@ def start_game():
     game["start"] = True
 
 
-text_settings = {"font_size": 40, "font": "monospace"}
+text_settings = {"font_size": 40, "font": DEFAULT_FONT}
 
 def game_over_screen():
     text = TextHelper(pygame, screen, text_settings)
     text.draw("Game Over!").background((255, 255, 255)).center().render()
     text.draw("Score: " + str(game["score"])).background((255, 255, 255))
-    text.center().set_offset((0, 50)).render()
+    text.center().set_offset((0, 70)).render()
     pygame.display.update()
 
 
@@ -100,6 +102,7 @@ def game_start_screen():
     text.center().render()
     pygame.display.update()
 
+# Game loop
 while True:
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -126,9 +129,6 @@ while True:
         game_start_screen()
         continue
 
-    text = TextHelper(pygame, screen, {"font_size": 20, "font": "monospace"})
-    text.draw("Score: " + str(game["score"])).set_cords((50, 50)).render()
-
     generate_obstacles()
 
     player_hits_obstacle = pygame.sprite.spritecollide(player_1, obstacles, False)
@@ -140,6 +140,10 @@ while True:
 
     all_sprites.update()
     all_sprites.draw(screen)
+
+    # Display current score
+    text = TextHelper(pygame, screen, {"font_size": 20, "font": DEFAULT_FONT})
+    text.draw("Score: " + str(game["score"])).set_cords((50, 20)).render()
 
     pygame.display.flip()
     FramePerSec.tick(FPS)

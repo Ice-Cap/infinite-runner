@@ -32,11 +32,20 @@ class TextHelper:
         return self
 
     def render(self):
-        text = self.font.render(self.text, True, self.color, self.background_color)
+        text = self.font.render(self.text, True, self.color)
         text_rect = text.get_rect(center = self.cords)
+
         if self.is_center:
             screen_center = self.screen.get_rect().center
             if self.offset:
                 screen_center = (screen_center[0] + self.offset[0], screen_center[1] + self.offset[1])
             text_rect.center = screen_center
+
+        if self.background_color:
+            background = self.pygame.Surface((text_rect.width + 15, text_rect.height + 15))
+            background.set_alpha(100)
+            background_rect = background.get_rect(center = text_rect.center)
+            background.fill(self.background_color)
+            self.screen.blit(background, background_rect)
+
         self.screen.blit(text, text_rect)
