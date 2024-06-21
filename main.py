@@ -27,12 +27,15 @@ FramePerSec = pygame.time.Clock()
 
 # Classes
 class Player(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, frames):
         super().__init__()
-        self.surface = pygame.Surface((30, PLAYER_HEIGHT))
-        self.surface.fill((10, 171, 74))
-        self.image = self.surface
-        self.rect = self.surface.get_rect(center = (10, 430))
+        self.image = frames["walk"][0]
+        self.image = pygame.transform.scale(self.image, (35, PLAYER_HEIGHT))
+        self.rect = self.image.get_rect(center = (10, 430))
+        self.frames = frames
+
+        self.current_frame = 0
+        self.last_update = pygame.time.get_ticks()
 
         self.pos = vec((30, 385))
         self.vel = vec(0,0)
@@ -42,10 +45,9 @@ class Player(pygame.sprite.Sprite):
     def move(self):
         self.acc = vec(0, GRAVITY)
 
-        pressed_keys = pygame.key.get_pressed()
-
         # Acceleration is added when keys are pressed
         # Fricition is applied as a constant to movement in the x direction
+        pressed_keys = pygame.key.get_pressed()
         if pressed_keys[K_LEFT]:
             self.acc.x = -ACC
         if pressed_keys[K_RIGHT]:
@@ -81,9 +83,18 @@ class Player(pygame.sprite.Sprite):
         if self.jumping and self.vel.y < -3:
             self.vel.y = -3
 
+    def animate(self):
+        now = pygame.time.get_ticks()
+        if now - self.last_update > 150:
+            self.last_update = now
+            self.current_frame = (self.current_frame + 1) % len(self.frames["walk"])
+            self.image = self.frames["walk"][self.current_frame]
+            self.image = pygame.transform.scale(self.image, (35, PLAYER_HEIGHT))
+
     def update(self):
         self.move()
         self.check_stop_falling()
+        self.animate()
 
 # Ground is a transparent surface that acts as a platform
 class Ground(pygame.sprite.Sprite):
@@ -139,6 +150,7 @@ def draw_text(text, position = (10, 10), font_size = 20, center = False):
     screen.blit(text_render, position)
     return text_render
 
+
 def generate_obstacles():
     random_screen_x = random.randint(SCREEN_WIDTH - 600, SCREEN_WIDTH - 220)
     if len(obstacles) == 0 or obstacles.sprites()[-1].rect.right < random_screen_x:
@@ -146,9 +158,38 @@ def generate_obstacles():
         obstacles.add(obs)
         all_sprites.add(obs)
 
+
+# Extract a frame from the spritesheet
+def get_frame(spritesheet, frame_rect):
+    frame = pygame.Surface((frame_rect[2], frame_rect[3]), pygame.SRCALPHA)
+    frame.blit(spritesheet, (0, 0), frame_rect)
+    return frame
+
+# Load images
+background_image = pygame.image.load("assets/forest-background.jpg").convert()
+scaled_background = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
+player_sheet = pygame.image.load("assets/player-spritesheet.png").convert_alpha()
+
+walk_frames = []
+walk_frames.append(pygame.Rect(0, 18, 15, 15))
+walk_frames.append(pygame.Rect(15, 18, 15, 15))
+jump_frames = []
+jump_frames.append(pygame.Rect(0, 45, 15, 15))
+jump_frames.append(pygame.Rect(0, 60, 15, 15))
+for i in range(0, len(walk_frames)):
+    walk_frames[i] = get_frame(player_sheet, walk_frames[i])
+for i in range(0, len(jump_frames)):
+    jump_frames[i] = get_frame(player_sheet, jump_frames[i])
+
+player_frames = {
+    "walk": walk_frames,
+    "jump": jump_frames
+}
+
 # Create ground and player objects
 ground = Ground()
-player_1 = Player()
+player_1 = Player(player_frames)
 
 # Add sprites to groups
 all_sprites = pygame.sprite.Group()
@@ -159,10 +200,6 @@ platforms = pygame.sprite.Group()
 platforms.add(ground)
 
 obstacles = pygame.sprite.Group()
-
-# Load images
-background_image = pygame.image.load("assets/forest-background.jpg").convert()
-scaled_background = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
 game_over = False
 while True:
