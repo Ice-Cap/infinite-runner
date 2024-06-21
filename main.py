@@ -32,7 +32,7 @@ background_image = pygame.image.load("assets/forest-background.jpg").convert()
 scaled_background = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 player_sheet = pygame.image.load("assets/player-spritesheet.png").convert_alpha()
 
-#character images
+#man images
 walking_images = []
 walk_1 = pygame.image.load("assets/Man_0.png").convert_alpha()
 walk_2 = pygame.image.load("assets/Man_1.png").convert_alpha()
@@ -51,6 +51,25 @@ walking_images.append(walk_6)
 walking_images.append(walk_7)
 walking_images.append(walk_8)
 
+#running_guy images
+running_guy = []
+run_1 = pygame.image.load("assets/running_man_1.png").convert_alpha()
+run_2 = pygame.image.load("assets/running_man_2.png").convert_alpha()
+run_3 = pygame.image.load("assets/running_man_3.png").convert_alpha()
+run_4 = pygame.image.load("assets/running_man_4.png").convert_alpha()
+run_5 = pygame.image.load("assets/running_man_5.png").convert_alpha()
+run_6 = pygame.image.load("assets/running_man_6.png").convert_alpha()
+run_7 = pygame.image.load("assets/running_man_7.png").convert_alpha()
+run_8 = pygame.image.load("assets/running_man_8.png").convert_alpha()
+running_guy.append(run_1)
+running_guy.append(run_2)
+running_guy.append(run_3)
+running_guy.append(run_4)
+running_guy.append(run_5)
+running_guy.append(run_6)
+running_guy.append(run_7)
+running_guy.append(run_8)
+
 # Create sprite groups
 all_sprites = pygame.sprite.Group()
 platforms = pygame.sprite.Group()
@@ -67,7 +86,7 @@ settings = {
     "acc": ACC,
     "fric": FRIC,
     "player_sheet": player_sheet,
-    "walking_images": walking_images
+    "walking_images": running_guy
 }
 game = {
     "score": 0,

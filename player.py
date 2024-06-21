@@ -75,7 +75,7 @@ class Player(pygame.sprite.Sprite):
 
     def animate(self):
         now = pygame.time.get_ticks()
-        if now - self.last_update > 60:
+        if now - self.last_update > 75:
             self.last_update = now
             self.current_frame = (self.current_frame + 1) % len(self.frames["walk"])
             self.image = self.frames["walk"][self.current_frame]
