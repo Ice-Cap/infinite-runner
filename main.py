@@ -40,6 +40,9 @@ rock_2 = pygame.image.load("assets/rock-2.png").convert_alpha()
 rock_2 = pygame.transform.scale(rock_2, (60, 60))
 rock_3 = pygame.image.load("assets/rock-3.png").convert_alpha()
 rock_3 = pygame.transform.scale(rock_3, (60, 140))
+vine = pygame.image.load("assets/vine.png").convert_alpha()
+vine_height = SCREEN_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT - 10
+vine = pygame.transform.scale(vine, (30, vine_height))
 class Obstacle(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -48,11 +51,8 @@ class Obstacle(pygame.sprite.Sprite):
 
         # Generate top obstacles
         if random.randint(1, 5) == 1:
-            height = SCREEN_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT - 10
-            self.surface = pygame.Surface((20, height))
-            self.surface.fill(color)
-            self.image = self.surface
-            self.rect = self.surface.get_rect(
+            self.image = vine
+            self.rect = self.image.get_rect(
                 topleft = (random.randint(SCREEN_WIDTH + 10, SCREEN_WIDTH + 100), 0))
             return
 
