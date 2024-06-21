@@ -5,6 +5,7 @@ import random
 from Player import Player
 from Obstacle import Obstacle
 from Ground import Ground
+from TextHelper import TextHelper
 
 # Global variables
 SCREEN_WIDTH = 700
@@ -68,19 +69,6 @@ def generate_obstacles():
         all_sprites.add(obs)
 
 
-def draw_text(text, position = (10, 10), font_size = 20, center = False):
-    my_font = pygame.font.SysFont("monospace", font_size)
-    text_render = my_font.render(text, True, (0, 0, 0))
-
-    if center:
-        text_rect = text_render.get_rect(center = position)
-        screen.blit(text_render, text_rect)
-        return text_render
-
-    screen.blit(text_render, position)
-    return text_render
-
-
 def start_game():
     global game, all_sprites, platforms, obstacles, player_1, ground
     game["over"] = False
@@ -96,31 +84,27 @@ def start_game():
     game["start"] = True
 
 
+text_settings = {"font_size": 40, "font": "monospace"}
+
 def game_over_screen():
-    center_width = SCREEN_WIDTH / 2
-    center_height = SCREEN_HEIGHT / 2
-    text_background = pygame.Surface((300, 150))
-    text_background.fill((255, 255, 255))
-    text_background.set_alpha(200)
-    screen.blit(text_background, (center_width - 150, center_height - 120))
-    draw_text("Game Over!", (center_width, center_height - 80), 40, center=True)
-    draw_text("Score: " + str(game["score"]), (center_width, center_height), 40, center=True)
+    text = TextHelper(pygame, screen, text_settings)
+    text.draw("Game Over!").background((255, 255, 255)).center().render()
+    text.draw("Score: " + str(game["score"])).background((255, 255, 255))
+    text.center().set_offset((0, 50)).render()
     pygame.display.update()
 
 
 def game_start_screen():
-    center_width = SCREEN_WIDTH / 2
-    center_height = SCREEN_HEIGHT / 2
-    text_background = pygame.Surface((300, 150))
-    text_background.fill((255, 255, 255))
-    text_background.set_alpha(200)
-    screen.blit(text_background, (center_width - 150, center_height - 120))
-    draw_text("Press SPACE to start", (center_width, center_height - 80), 40, center=True)
+    text = TextHelper(pygame, screen, text_settings)
+    text.draw("Press Space to start").background((255, 255, 255))
+    text.center().render()
     pygame.display.update()
 
 while True:
     for event in pygame.event.get():
         if event.type == QUIT:
+            for entity in all_sprites:
+                entity.kill()
             pygame.quit()
             sys.exit()
         if event.type == pygame.KEYDOWN:
@@ -142,7 +126,8 @@ while True:
         game_start_screen()
         continue
 
-    draw_text("Score: " + str(game["score"]))
+    text = TextHelper(pygame, screen, {"font_size": 20, "font": "monospace"})
+    text.draw("Score: " + str(game["score"])).set_cords((50, 50)).render()
 
     generate_obstacles()
 
