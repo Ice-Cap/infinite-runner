@@ -11,7 +11,6 @@ class Player(pygame.sprite.Sprite):
         self.game = game
         self.frames = self.initialize_frames()
         self.image = self.frames["walk"][0]
-        # self.image = pygame.transform.scale(self.image, (35, settings["player_height"]))
         self.rect = self.image.get_rect(center = (10, 430))
 
         self.current_frame = 0
@@ -27,7 +26,7 @@ class Player(pygame.sprite.Sprite):
         self.acc = vec(0, settings["gravity"])
 
         # Acceleration is added when keys are pressed
-        # Fricition is applied as a constant to movement in the x direction
+        # Friction is applied as a constant to movement in the x direction
         pressed_keys = pygame.key.get_pressed()
         if pressed_keys[K_LEFT]:
             self.acc.x = -settings["acc"]
@@ -38,6 +37,7 @@ class Player(pygame.sprite.Sprite):
         self.vel += self.acc
         self.pos += self.vel + 0.5 * self.acc
 
+        # Make sure player can't go off screen
         if self.pos.x > settings["screen_width"]:
             self.pos.x = settings["screen_width"]
         if self.pos.x < 0:
@@ -60,6 +60,7 @@ class Player(pygame.sprite.Sprite):
             self.jumping = True
             self.vel.y = -15
 
+    # Used for variable jump height
     def cancel_jump(self):
         if self.jumping and self.vel.y < -3:
             self.vel.y = -3
