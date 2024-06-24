@@ -16,6 +16,7 @@ ACC = 0.5
 FRIC = -0.12
 FPS = 60
 GRAVITY = 0.5
+START_SPEED = 4
 
 DEFAULT_FONT = "skia"
 
@@ -38,7 +39,7 @@ for i in range(1, 4):
     rock_sprites.append(rock)
 rock_sprites[0] = pygame.transform.scale(rock_sprites[0], (55, 100))
 rock_sprites[1] = pygame.transform.scale(rock_sprites[1], (60, 60))
-rock_sprites[2] = pygame.transform.scale(rock_sprites[2], (60, 140))
+rock_sprites[2] = pygame.transform.scale(rock_sprites[2], (60, 120))
 vine = pygame.image.load("assets/vine.png").convert_alpha()
 vine_height = SCREEN_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT - 10
 vine = pygame.transform.scale(vine, (30, vine_height))
@@ -72,7 +73,7 @@ game = {
     "platforms": platforms,
     "over": False,
     "start": False,
-    "speed": 4
+    "speed": START_SPEED
 }
 player_1 = Player(settings, game)
 all_sprites.add(player_1)
@@ -98,6 +99,7 @@ def start_game():
     global game, all_sprites, platforms, obstacles, player_1, ground
     game["over"] = False
     game["score"] = 0
+    game["speed"] = START_SPEED
     all_sprites.empty()
     platforms.empty()
     obstacles.empty()
