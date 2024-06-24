@@ -32,35 +32,23 @@ background_image = pygame.image.load("assets/forest-background.jpg").convert()
 scaled_background = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # Obstacle images
-rock_1 = pygame.image.load("assets/rock-1.png").convert_alpha()
-rock_1 = pygame.transform.scale(rock_1, (55, 100))
-rock_2 = pygame.image.load("assets/rock-2.png").convert_alpha()
-rock_2 = pygame.transform.scale(rock_2, (60, 60))
-rock_3 = pygame.image.load("assets/rock-3.png").convert_alpha()
-rock_3 = pygame.transform.scale(rock_3, (60, 140))
+rock_sprites = []
+for i in range(1, 4):
+    rock = pygame.image.load(f"assets/rock-{i}.png").convert_alpha()
+    rock_sprites.append(rock)
+rock_sprites[0] = pygame.transform.scale(rock_sprites[0], (55, 100))
+rock_sprites[1] = pygame.transform.scale(rock_sprites[1], (60, 60))
+rock_sprites[2] = pygame.transform.scale(rock_sprites[2], (60, 140))
 vine = pygame.image.load("assets/vine.png").convert_alpha()
 vine_height = SCREEN_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT - 10
 vine = pygame.transform.scale(vine, (30, vine_height))
 
-#P layer images
-running_guy = []
-run_1 = pygame.image.load("assets/running_man_1.png").convert_alpha()
-run_2 = pygame.image.load("assets/running_man_2.png").convert_alpha()
-run_3 = pygame.image.load("assets/running_man_3.png").convert_alpha()
-run_4 = pygame.image.load("assets/running_man_4.png").convert_alpha()
-run_5 = pygame.image.load("assets/running_man_5.png").convert_alpha()
-run_6 = pygame.image.load("assets/running_man_6.png").convert_alpha()
-run_7 = pygame.image.load("assets/running_man_7.png").convert_alpha()
-run_8 = pygame.image.load("assets/running_man_8.png").convert_alpha()
-running_guy.append(run_1)
-running_guy.append(run_2)
-running_guy.append(run_3)
-running_guy.append(run_4)
-running_guy.append(run_5)
-running_guy.append(run_6)
-running_guy.append(run_7)
-running_guy.append(run_8)
-running_guy.reverse()
+# Player images
+runner_sprites = []
+for i in range(1, 9):
+    runner_image = pygame.image.load(f"assets/running_man_{i}.png").convert_alpha()
+    runner_sprites.append(runner_image)
+runner_sprites.reverse()
 
 # Create sprite groups
 all_sprites = pygame.sprite.Group()
@@ -77,7 +65,7 @@ settings = {
     "gravity": GRAVITY,
     "acc": ACC,
     "fric": FRIC,
-    "running_images": running_guy,
+    "running_images": runner_sprites,
     "game_speed": 4
 }
 game = {
@@ -95,7 +83,7 @@ platforms.add(ground)
 
 
 obstacle_sprites = {
-    "rocks": [rock_1, rock_2, rock_3],
+    "rocks": rock_sprites,
     "vine": vine
 }
 def generate_obstacles():
