@@ -2,7 +2,7 @@ import random
 import pygame
 
 class Obstacle(pygame.sprite.Sprite):
-    def __init__(self, settings, game, pygameRef, sprites):
+    def __init__(self, settings, game, sprites):
         super().__init__()
 
         self.game = game

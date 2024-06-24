@@ -89,7 +89,7 @@ obstacle_sprites = {
 def generate_obstacles():
     random_screen_x = random.randint(SCREEN_WIDTH - 600, SCREEN_WIDTH - 220)
     if len(obstacles) == 0 or obstacles.sprites()[-1].rect.right < random_screen_x:
-        obs = Obstacle(settings, game, pygame, obstacle_sprites)
+        obs = Obstacle(settings, game, obstacle_sprites)
         obstacles.add(obs)
         all_sprites.add(obs)
 
