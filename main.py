@@ -65,14 +65,14 @@ settings = {
     "gravity": GRAVITY,
     "acc": ACC,
     "fric": FRIC,
-    "running_images": runner_sprites,
-    "game_speed": 4
+    "running_images": runner_sprites
 }
 game = {
     "score": 0,
     "platforms": platforms,
     "over": False,
-    "start": False
+    "start": False,
+    "speed": 4
 }
 player_1 = Player(settings, game)
 all_sprites.add(player_1)

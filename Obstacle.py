@@ -26,8 +26,8 @@ class Obstacle(pygame.sprite.Sprite):
         self.move()
 
     def move(self):
-        self.rect.x -= self.settings["game_speed"]
+        self.rect.x -= self.game["speed"]
         if self.rect.right < 0:
-            self.settings["game_speed"] += 0.05
+            self.game["speed"] += 0.05
             self.game["score"] += 1
             self.kill()
