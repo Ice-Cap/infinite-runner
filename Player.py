@@ -18,12 +18,12 @@ class Player(pygame.sprite.Sprite):
 
         self.frames = {"run": run_frames}
         self.image = run_frames[0]
-        self.rect = self.image.get_rect(center = (10, 430))
+        self.rect = self.image.get_rect(center = (50, 430))
 
         self.current_frame = 0
         self.last_update = pygame.time.get_ticks()
 
-        self.pos = vec((30, 385))
+        self.pos = vec((50, 385))
         self.vel = vec(0,0)
         self.acc = vec(0,0)
         self.jumping = False

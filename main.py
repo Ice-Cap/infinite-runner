@@ -82,11 +82,11 @@ ground = Ground(settings)
 all_sprites.add(ground)
 platforms.add(ground)
 
-
 obstacle_sprites = {
     "rocks": rock_sprites,
     "vine": vine
 }
+
 def generate_obstacles():
     random_screen_x = random.randint(SCREEN_WIDTH - 600, SCREEN_WIDTH - 220)
     if len(obstacles) == 0 or obstacles.sprites()[-1].rect.right < random_screen_x:
