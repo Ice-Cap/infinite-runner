@@ -11,7 +11,7 @@ from TextHelper import TextHelper
 SCREEN_WIDTH = 700
 SCREEN_HEIGHT = 500
 GROUND_HEIGHT = 45
-PLAYER_HEIGHT = 80
+PLAYER_HEIGHT = 90
 ACC = 0.5
 FRIC = -0.12
 FPS = 60
@@ -27,31 +27,22 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.DOUBLEBUF
 pygame.display.set_caption("Infinite Runner")
 FramePerSec = pygame.time.Clock()
 
-# Load images
+# Background image
 background_image = pygame.image.load("assets/forest-background.jpg").convert()
 scaled_background = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
-player_sheet = pygame.image.load("assets/player-spritesheet.png").convert_alpha()
 
-#man images
-walking_images = []
-walk_1 = pygame.image.load("assets/Man_0.png").convert_alpha()
-walk_2 = pygame.image.load("assets/Man_1.png").convert_alpha()
-walk_3 = pygame.image.load("assets/Man_2.png").convert_alpha()
-walk_4 = pygame.image.load("assets/Man_3.png").convert_alpha()
-walk_5 = pygame.image.load("assets/Man_4.png").convert_alpha()
-walk_6 = pygame.image.load("assets/Man_5.png").convert_alpha()
-walk_7 = pygame.image.load("assets/Man_6.png").convert_alpha()
-walk_8 = pygame.image.load("assets/Man_7.png").convert_alpha()
-walking_images.append(walk_1)
-walking_images.append(walk_2)
-walking_images.append(walk_3)
-walking_images.append(walk_4)
-walking_images.append(walk_5)
-walking_images.append(walk_6)
-walking_images.append(walk_7)
-walking_images.append(walk_8)
+# Obstacle images
+rock_1 = pygame.image.load("assets/rock-1.png").convert_alpha()
+rock_1 = pygame.transform.scale(rock_1, (55, 100))
+rock_2 = pygame.image.load("assets/rock-2.png").convert_alpha()
+rock_2 = pygame.transform.scale(rock_2, (60, 60))
+rock_3 = pygame.image.load("assets/rock-3.png").convert_alpha()
+rock_3 = pygame.transform.scale(rock_3, (60, 140))
+vine = pygame.image.load("assets/vine.png").convert_alpha()
+vine_height = SCREEN_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT - 10
+vine = pygame.transform.scale(vine, (30, vine_height))
 
-#running_guy images
+#P layer images
 running_guy = []
 run_1 = pygame.image.load("assets/running_man_1.png").convert_alpha()
 run_2 = pygame.image.load("assets/running_man_2.png").convert_alpha()
@@ -69,6 +60,7 @@ running_guy.append(run_5)
 running_guy.append(run_6)
 running_guy.append(run_7)
 running_guy.append(run_8)
+running_guy.reverse()
 
 # Create sprite groups
 all_sprites = pygame.sprite.Group()
@@ -85,8 +77,8 @@ settings = {
     "gravity": GRAVITY,
     "acc": ACC,
     "fric": FRIC,
-    "player_sheet": player_sheet,
-    "walking_images": running_guy
+    "running_images": running_guy,
+    "game_speed": 4
 }
 game = {
     "score": 0,
@@ -102,10 +94,14 @@ all_sprites.add(ground)
 platforms.add(ground)
 
 
+obstacle_sprites = {
+    "rocks": [rock_1, rock_2, rock_3],
+    "vine": vine
+}
 def generate_obstacles():
     random_screen_x = random.randint(SCREEN_WIDTH - 600, SCREEN_WIDTH - 220)
     if len(obstacles) == 0 or obstacles.sprites()[-1].rect.right < random_screen_x:
-        obs = Obstacle(settings, game, pygame)
+        obs = Obstacle(settings, game, pygame, obstacle_sprites)
         obstacles.add(obs)
         all_sprites.add(obs)
 

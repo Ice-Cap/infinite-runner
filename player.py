@@ -6,19 +6,18 @@ vec = pygame.math.Vector2
 class Player(pygame.sprite.Sprite):
     def __init__(self, settings, game):
         super().__init__()
-        self.player_sheet = settings["player_sheet"]
+
         self.settings = settings
         self.game = game
-        # self.frames = self.initialize_frames()
-        # self.image = self.frames["walk"][0]
-        walk_frames = []
-        for i in range(0, len(settings["walking_images"])):
-            frame = settings["walking_images"][i]
-            scaled_frame = pygame.transform.scale(frame, (40, self.settings["player_height"]))
-            walk_frames.append(scaled_frame)
 
-        self.frames = {"walk": walk_frames}
-        self.image = walk_frames[0]
+        run_frames = []
+        for i in range(0, len(settings["running_images"])):
+            frame = settings["running_images"][i]
+            scaled_frame = pygame.transform.scale(frame, (40, self.settings["player_height"]))
+            run_frames.append(scaled_frame)
+
+        self.frames = {"run": run_frames}
+        self.image = run_frames[0]
         self.rect = self.image.get_rect(center = (10, 430))
 
         self.current_frame = 0
@@ -75,10 +74,10 @@ class Player(pygame.sprite.Sprite):
 
     def animate(self):
         now = pygame.time.get_ticks()
-        if now - self.last_update > 75:
+        if now - self.last_update > 85:
             self.last_update = now
-            self.current_frame = (self.current_frame + 1) % len(self.frames["walk"])
-            self.image = self.frames["walk"][self.current_frame]
+            self.current_frame = (self.current_frame + 1) % len(self.frames["run"])
+            self.image = self.frames["run"][self.current_frame]
 
     def update(self):
         self.move()
